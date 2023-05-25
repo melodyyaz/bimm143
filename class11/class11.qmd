@@ -1,0 +1,89 @@
+---
+title: "class11ws"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+##Identify Genetic Variants of Interest
+
+> Q1: What are those 4 candidate SNPs?
+
+rs 12936231, rs8067378, rs9303277, rs7216389
+
+> Q2: What three genes do these variants overlap or effect?
+
+ZPBP2 \>Q3: What is the location of rs8067378 and what are the different alleles for rs8067378?
+
+A/G, Ancestral:G, MAF:0.43 (G). Chromosome 17;39895095
+
+> Q4: Name at least 3 downstream genes for rs8067378?
+
+zpbp2-201, ccds11353.2, ccds11352.1
+
+## Propoprtion og G?G in a population
+
+read in csv
+
+```{r}
+mxl <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378 (2).csv")
+head(mxl)
+```
+
+```{r}
+table(mxl$Genotype..forward.strand.)
+```
+
+> Q5: What proportion of the Mexican Ancestry in Los Angels sample population (MXL) are homozygous for the asthma associated SNP (G\|G)?
+
+```{r}
+table(mxl$Genotype..forward.strand.)/nrow(mxl)*100
+```
+
+14.06%
+
+> Q6. Back on the ENSEMBLE page, use the "search for a sample" field above to find the particular sample HG00109. This is a male from the GBR population group. What is the genotype for this sample?
+
+homozygous
+
+> Q7: How many sequences are there in the first file? What is the file size and format of the data? Make sure the format is fastqsanger here!
+
+3863 sequences, 
+
+> Q8: What is the GC content and sequence length of the second fastq file?
+
+53%
+> Q9: How about per base sequence quality? Does any base have a mean quality score below 20?
+
+20 is your threshold, no
+
+>Q10: Where are most the accepted hits located?
+
+PSMD3, ORMDL3 
+>
+Q11: Following Q10, is there any interesting gene around that area?
+
+ no 
+> Q12: Cufflinks again produces multiple output files that you can inspect from your right-handside galaxy history. From the "gene expression" output, what is the FPKM for the ORMDL3 gene? What are the other genes with above zero FPKM values?
+
+128189, GSDMB, ZBPB2
