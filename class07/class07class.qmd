@@ -1,0 +1,189 @@
+---
+title: "inclass07"
+format: pdf
+---
+
+# Clustering
+
+First, lets make up some data to cluster so we can get a feel for these methodsandd how to work with them.
+
+We can use the "rnorm" function to get random numbers from a normal distribution around a given "mean" 
+```{r}
+hist(rnorm(50000, mean=3))
+```
+
+Lets gets 30 points with a mean of 3
+```{r}
+temp <- c(rnorm(30, mean=3),
+rnorm(30, mean=-3))
+```
+
+put two of these together
+```{r}
+x <- cbind(x=temp, y=rev(temp))
+x
+plot(x)
+```
+
+##K-means clustering
+
+Very popular clustering mehtods, especially for big datasets,that we can use with the "kmeans()" function in base R.
+```{r}
+km <- kmeans(x, centers=2)
+km
+```
+
+```{r}
+kmeans(x, centers=2, nstart=20)
+```
+
+Q: What component of your result objects deatils
+
+-cluster size?
+```{r}
+km$size
+```
+
+-cluster assignemnt/membership?
+```{r}
+km$cluster
+```
+
+cluster center?
+```{r}
+km$centers
+```
+
+>>Q. Plot x colored by the kmeans cluster assignement and add cluster points as blue points
+
+#pch made it a square, cex made the square bigger
+
+```{r}
+plot(x, col=km$cluster)
+points(km$centers, col="blue", pch=15, cex=3)
+```
+
+
+
+>Q. Lets cluster into 3 groups or same "x" data and make a plot
+
+```{r}
+km <- kmeans(x,3)
+plot(x, col=km$cluster)
+```
+
+#Hierarchical clustering
+
+we can use the 'hclust()' function for Heriarchical Clustering. Unlike 'kmeans()' where we could just pass in our data as input, we need to give 'hclust()' a distance matrix.
+
+We will use the 'dist()' fucntion to start with
+
+```{r}
+d <- dist(x)
+hc <- hclust(d)
+hc
+```
+
+```{r}
+plot(hc)
+```
+
+I can now 'cut' my tree with "cutree()' to yield a clister membership vector
+
+```{r}
+grps <- cutree(hc,h=8)
+grps 
+plot(x, col=grps)
+```
+
+You can also tell "cutree()" to cut where it yields k groups
+
+```{r}
+cutree(hc, k=2)
+```
+
+#Principal Component Analysis (PCA)
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+```
+
+
+>Q1. How many rows and columns are in your new data frame named x? What R functions could you use to answer this questions?
+
+find the number of rows and columns
+```{r}
+dim(x)
+```
+
+Preview the first 6 rows
+```{r}
+head(x)
+```
+
+fix the labeling of the rows, they are set as the first column of our x dataframe instead of proper row names
+```{r}
+rownames(x) <- x[,1]
+x <- x[,-1]
+head(x)
+
+```
+```{r}
+#now re check number of rows and columns to show it's corrected
+dim(x)
+```
+
+```{r}
+x <- read.csv(url, row.names=1)
+head(x)
+```
+
+>Q2. Which approach to solving the ‘row-names problem’ mentioned above do you prefer and why? Is one approach more robust than another under certain circumstances? 
+
+  the second is prefered because if you run the code x<-x[,-1] multiple times, it will keep shifting the columns
+  
+  
+```{r}
+barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
+```
+
+>Q3: Changing what optional argument in the above barplot() function results in the following plot?
+
+can change the beside factor to make it stacked
+```{r}
+barplot(as.matrix(x), beside=F, col=rainbow(nrow(x)))
+```
+
+>Q5: Generating all pairwise plots may help somewhat. Can you make sense of the following code and resulting figure? What does it mean if a given point lies on the diagonal for a given plot?
+
+  This figure shows all countries compared separately ind eparate plots, and you can mathc up their x and y axis. If a given point lies on the diagonal for a given plot, it means that at that point, both countries have the same value/correlate.
+  
+```{r}
+pairs(x, col=rainbow(10), pch=16)
+```
+
+
+>Q6. What is the main differences between N. Ireland and the other countries of the UK in terms of this data-set?
+  
+  Northern Ireland has lower values on average than other countries of the UK
+  
+  
+#Lets use PCA to make this plot easier
+```{r}
+pca <- prcomp( t(x) )
+summary(pca)
+```
+
+>Q7. Complete the code below to generate a plot of PC1 vs PC2. The second line adds text labels over the data points.
+
+```{r}
+plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], colnames(x))
+```
+
+add colors
+```{r}
+plot(pca$x[,1], pca$x[,2], col= c("orange", "red", "blue", "green"), xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], colnames(x))
+```

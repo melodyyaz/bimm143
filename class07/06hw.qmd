@@ -1,0 +1,32 @@
+---
+title: "class06homework"
+format: pdf
+---
+
+hc <- hclust( dist( rbind(s1.b, s2.b, s3.b) ) )
+plot(hc)
+
+>Q6. How would you generalize the original code above to work with any set of input protein structures?
+
+
+
+```{r}
+library(bio3d)
+
+#input is "p", standing for any protein you are analyzing
+#function takes protein p and searches for it in dataset-> finds residue and vfactor values and correlates the two
+#output: creates a plot showing Bfactor interactions with residue/amino acid
+my_function <- function(p){
+  s<-read.pdb(p)
+  
+  s.chainA <- trim.pdb(s, chain="A", elety="CA")
+  s.b<-s.chainA$atom$b
+  
+  plotb3(s.b,sse=s.chainA, typ="l", ylab="Bfactor")
+  
+}
+
+my_function("4AKE")
+```
+
+
