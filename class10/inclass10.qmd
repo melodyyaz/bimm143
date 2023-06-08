@@ -1,0 +1,132 @@
+---
+title: "inclass10"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+#Structural Bioinfromatics (pt.2 Focus on new Alphafold2)
+
+
+#Comparitive Analysis of ADK
+
+ADK(Adenelate Kinase) is an important drug target abd we wiuld love to know how it works, ie molecular mechanism. There has been lots of work done on this protein due to its importance including lots of crystal structures
+
+```{r}
+library(bio3d)
+
+aa <- get.seq("1ake_A")
+aa
+
+```
+
+>Q10. Which of the packages above is found only on BioConductor and not CRAN? 
+
+bio3d
+
+>Q11. Which of the above packages is not found on BioConductor or CRAN?: 
+
+Grantlab/bio3d/view
+
+>Q12. True or False? Functions from the devtools package can be used to install packages from GitHub and BitBucket? 
+
+True
+
+
+We can now run BLAST with this seuqence
+```{r}
+b <- blast.pdb(aa)
+```
+
+
+>Q13. How many amino acids are in this sequence, i.e. how long is this sequence? 
+
+214
+
+# Plot a summary of search results
+```{r}
+hits <- plot(b)
+```
+
+```{r}
+# List out some 'top hits'
+head(hits$pdb.id)
+```
+
+```{r}
+hits <- NULL
+hits$pdb.id <- c('1AKE_A','6S36_A','6RZE_A','3HPR_A','1E4V_A','5EJE_A','1E4Y_A','3X2S_A','6HAP_A','6HAM_A','4K46_A','3GMT_A','4PZL_A')
+```
+
+
+#Now we can downlaod all these pdb structures
+
+```{r}
+# Download releated PDB files
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+
+Now I want to align and supperpose these structures wjich are all over the place
+
+```{r}
+# Align releated PDBs
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+```{r}
+pdbs
+```
+
+Now we have our aligned and suoerposed strucutures we cna pefrom all sorts of analysis on them. Lets do PCA
+
+```{r}
+# Perform PCA
+pc.xray <- pca(pdbs)
+plot(pc.xray)
+
+```
+
+Results of PCA on adylate kinase x ray structures. Each dot represents one PDB structures.
+
+We can cluster the strucutres by RMSD (or any other method).
+```{r}
+# Calculate RMSD
+rd <- rmsd(pdbs)
+
+# Structure-based clustering
+hc.rd <- hclust(dist(rd))
+grps <- cutree(hc.rd, k=3)
+
+plot(pc.xray, 1:2, col=grps)
+```
+
+
+
+```{r}
+# Visualize first principal component
+pc1 <- mktrj(pc.xray, pc=1, file="pc_1.pdb")
+
+```
+
+
