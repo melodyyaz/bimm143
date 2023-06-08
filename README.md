@@ -10,4 +10,5 @@ From class [BIMM143](https://bioboot.github.io/bimm143_S23/class-material/github
 -[Class 08](https://github.com/melodyyaz/bimm143/blob/main/class08/inclass08.qmd): Unsupervised Learning Mini-Project
 
 -[Class 09](https://github.com/melodyyaz/bimm143/tree/main/class09): Structural Bioinformatics (pt1)
+
 -[Class 11](https://github.com/melodyyaz/bimm143/blob/main/class11/class11.qmd0): **Genome informatics**
